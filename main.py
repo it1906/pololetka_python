@@ -22,6 +22,7 @@ reloadSound = pygame.mixer.Sound('sound/reload.mp3')
 score = 0
 
 
+
 class player(object):
     def __init__(self, x, y, width, height):
         self.x = x
@@ -110,7 +111,7 @@ class enemy(object):
         self.walkCount = 0
         self.vel = 3
         self.hitbox = (self.x + 17, self.y + 2, 31, 57)
-        self.health = 10
+        self.health = 20
         self.visible = True
 
     def draw(self, win):
@@ -150,6 +151,13 @@ class enemy(object):
             self.health -= 1
         else:
             self.visible = False
+            font1 = pygame.font.SysFont('comicsans', 100)
+            text = font1.render('You win', 1, (255, 0, 0))
+            win.blit(text, (250 - (text.get_width() / 2), 200))
+            pygame.display.update()
+            bulletSound.stop()
+            pygame.time.delay(1800)
+            pygame.quit()
         print('hit')
 
 
@@ -174,6 +182,7 @@ goblin = enemy(100, 410, 64, 64, 450)
 shootLoop = 0
 bullets = []
 run = True
+
 
 while run:
     clock.tick(27)
@@ -209,6 +218,7 @@ while run:
             bullets.pop(bullets.index(bullet))
 
     keys = pygame.key.get_pressed()
+
 
     if keys[pygame.K_SPACE] and shootLoop == 0:
         bulletSound.play()

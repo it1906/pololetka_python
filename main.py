@@ -9,7 +9,6 @@ pygame.display.set_caption("First Game")
 walkRight = [pygame.image.load('postava/R1.png'), pygame.image.load('postava/R2.png'), pygame.image.load('postava/R3.png'), pygame.image.load('postava/R4.png'), pygame.image.load('postava/R5.png'), pygame.image.load('postava/R6.png'), pygame.image.load('postava/R7.png'), pygame.image.load('postava/R8.png'), pygame.image.load('postava/R9.png')]
 walkLeft = [pygame.image.load('postava/L1.png'), pygame.image.load('postava/L2.png'), pygame.image.load('postava/L3.png'), pygame.image.load('postava/L4.png'), pygame.image.load('postava/L5.png'), pygame.image.load('postava/L6.png'), pygame.image.load('postava/L7.png'), pygame.image.load('postava/L8.png'), pygame.image.load('postava/L9.png')]
 bg = pygame.image.load('img/bg.jpg')
-# shot = pygame.image.load('img/')
 char = pygame.image.load('postava/standing.png')
 
 clock = pygame.time.Clock()
@@ -73,7 +72,10 @@ class player(object):
         pygame.quit()
 
 
-class projectile(object):
+class projectile (object):
+    strela = pygame.image.load('img/bullet.png')
+    velkaStrela = pygame.image.load('img/bigbullet.png')
+
     def __init__(self, x, y, radius, color, facing):
         self.x = x
         self.y = y
@@ -83,10 +85,10 @@ class projectile(object):
         self.vel = 8 * facing
 
     def draw(self, win):
-        pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)
+        win.blit(self.strela,(self.x, self.y))
 
 
-class enemy(object):
+class enemy (object):
     walkRight = [pygame.image.load('enemy/R1E.png'), pygame.image.load('enemy/R2E.png'),
                  pygame.image.load('enemy/R3E.png'), pygame.image.load('enemy/R4E.png'),
                  pygame.image.load('enemy/R5E.png'), pygame.image.load('enemy/R6E.png'),
@@ -111,7 +113,7 @@ class enemy(object):
         self.walkCount = 0
         self.vel = 3
         self.hitbox = (self.x + 17, self.y + 2, 31, 57)
-        self.health = 20
+        self.health = 50
         self.visible = True
 
     def draw(self, win):
@@ -128,7 +130,7 @@ class enemy(object):
                 self.walkCount += 1
 
             pygame.draw.rect(win, (255, 0, 0), (self.hitbox[0], self.hitbox[1] - 20, 50, 10))
-            pygame.draw.rect(win, (0, 128, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - (5 * (10 - self.health)), 10))
+            pygame.draw.rect(win, (0, 128, 0), (self.hitbox[0], self.hitbox[1] - 20, 50 - (1 * (50 - self.health)), 10))
             self.hitbox = (self.x + 17, self.y + 2, 31, 57)
             # pygame.draw.rect(win, (255,0,0), self.hitbox,2)
 
@@ -151,6 +153,10 @@ class enemy(object):
             self.health -= 1
         else:
             self.visible = False
+        if score == 25:
+            projectile.strela = pygame.image.load('img/bigbullet.png')
+
+        if score == 50:
             font1 = pygame.font.SysFont('comicsans', 100)
             text = font1.render('You win', 1, (255, 0, 0))
             win.blit(text, (250 - (text.get_width() / 2), 200))
@@ -161,16 +167,16 @@ class enemy(object):
         print('hit')
 
 
-def redrawGameWindow():
+def redrawGameWindow ():
     win.blit(bg, (0, 0))
     text = font.render('Score: ' + str(score), 1, (0, 0, 0))
     win.blit(text, (350, 10))
     man.draw(win)
     goblin.draw(win)
+
+
     for bullet in bullets:
         bullet.draw(win)
-    if score >= 10:
-        goblin.draw(win)
 
     pygame.display.update()
 
@@ -186,7 +192,6 @@ run = True
 
 while run:
     clock.tick(27)
-
     if goblin.visible == True:
         if man.hitbox[1] < goblin.hitbox[1] + goblin.hitbox[3] and man.hitbox[1] + man.hitbox[3] > goblin.hitbox[1]:
             if man.hitbox[0] + man.hitbox[2] > goblin.hitbox[0] and man.hitbox[0] < goblin.hitbox[0] + goblin.hitbox[2]:
